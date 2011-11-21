@@ -384,7 +384,7 @@ newtype Function = Function S.ByteString  deriving (Typeable, Show, Read, Eq)
 
 newtype UUID = UUID S.ByteString  deriving (Typeable, Show, Read, Eq)
 
-newtype MD5 = MD5 S.ByteString  deriving (Typeable, Show, Read, Eq)
+newtype MD5 = MD5 S.ByteString  deriving (Typeable, Show, Read, Eq, Ord)
 
 newtype UserDefined = UserDefined S.ByteString  deriving (Typeable, Show, Read, Eq)
 
