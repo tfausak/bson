@@ -60,7 +60,7 @@ roundTo :: (RealFrac a) => a -> a -> a
 -- ^ Round second number to nearest multiple of first number. Eg: roundTo (1/1000) 0.12345 = 0.123
 roundTo mult n = fromIntegral (round (n / mult)) * mult
 
-showHexLen :: (Integral n) => Int -> n -> ShowS
+showHexLen :: (Show n, Integral n) => Int -> n -> ShowS
 -- ^ showHex of n padded with leading zeros if necessary to fill d digits
 showHexLen d n = showString (replicate (d - sigDigits n) '0') . showHex n  where
 	sigDigits 0 = 1
