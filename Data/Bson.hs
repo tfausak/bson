@@ -1,8 +1,13 @@
-{- | A BSON document is a JSON-like object with a standard binary encoding defined at bsonspec.org. This implements version 1.0 of that spec.
+-- | A BSON document is a JSON-like object with a standard binary encoding
+-- defined at bsonspec.org. This implements version 1.0 of that spec.
+--
+-- Use the GHC language extension /OverloadedStrings/ to automatically convert
+-- String literals to Text
 
-Use the GHC language extension /OverloadedStrings/ to automatically convert String literals to Text -}
-
-{-# LANGUAGE OverloadedStrings, TypeSynonymInstances, FlexibleInstances, DeriveDataTypeable, RankNTypes, OverlappingInstances, IncoherentInstances, ScopedTypeVariables, ForeignFunctionInterface, BangPatterns, CPP #-}
+{-# LANGUAGE OverloadedStrings, TypeSynonymInstances, FlexibleInstances #-}
+{-# LANGUAGE DeriveDataTypeable, RankNTypes, OverlappingInstances #-}
+{-# LANGUAGE IncoherentInstances, ScopedTypeVariables #-}
+{-# LANGUAGE ForeignFunctionInterface, BangPatterns, CPP #-}
 
 module Data.Bson (
 	-- * Document
@@ -25,29 +30,32 @@ module Data.Bson (
 
 import Prelude hiding (lookup)
 import Control.Applicative ((<$>), (<*>))
-import Data.Typeable hiding (cast)
-import Data.Int
-import Data.Word
-import Data.Time.Clock (UTCTime)
-import Data.Time.Clock.POSIX
-import Data.Time.Format ()  -- for Show and Read instances of UTCTime
-import Data.List (find, findIndex)
 import Data.Bits (shift, (.|.))
-import qualified Data.ByteString as BS (ByteString, unpack, take)
-import qualified Data.ByteString.Char8 as BSC (pack)
-import qualified Data.Text as T
-import qualified Crypto.Hash.MD5 as MD5 (hash)
-import Numeric (readHex, showHex)
-import Network.BSD (getHostName)
-import System.IO.Unsafe (unsafePerformIO)
-import Data.IORef
+import Data.Int (Int32, Int64)
+import Data.IORef (IORef, newIORef, atomicModifyIORef)
+import Data.List (find, findIndex)
 import Data.Maybe (maybeToList, mapMaybe)
-import Control.Monad.Identity
-import qualified Text.ParserCombinators.ReadP as R
-import qualified Text.ParserCombinators.ReadPrec as R (lift, readS_to_Prec)
+import Data.Time.Clock (UTCTime)
+import Data.Time.Clock.POSIX (POSIXTime, posixSecondsToUTCTime,
+                              utcTimeToPOSIXSeconds, getPOSIXTime)
+import Data.Time.Format ()  -- for Show and Read instances of UTCTime
+import Data.Typeable hiding (cast)
+import Data.Word (Word8, Word16, Word32, Word64)
+import Numeric (readHex, showHex)
+import System.IO.Unsafe (unsafePerformIO)
 import Text.Read (Read(..))
 
+import qualified Data.ByteString as S
+import qualified Data.ByteString.Char8 as SC
+import qualified Text.ParserCombinators.ReadP as R
+import qualified Text.ParserCombinators.ReadPrec as R (lift, readS_to_Prec)
+
+import Control.Monad.Identity (runIdentity)
+import Network.BSD (getHostName)
 import Data.Text (Text)
+
+import qualified Data.Text as T
+import qualified Crypto.Hash.MD5 as MD5
 
 getProcessID :: IO Int
 -- ^ Get the current process id.
@@ -363,15 +371,15 @@ fitInt n = if fromIntegral (minBound :: m) <= n && n <= fromIntegral (maxBound :
 
 -- ** Binary types
 
-newtype Binary = Binary BS.ByteString  deriving (Typeable, Show, Read, Eq)
+newtype Binary = Binary S.ByteString  deriving (Typeable, Show, Read, Eq)
 
-newtype Function = Function BS.ByteString  deriving (Typeable, Show, Read, Eq)
+newtype Function = Function S.ByteString  deriving (Typeable, Show, Read, Eq)
 
-newtype UUID = UUID BS.ByteString  deriving (Typeable, Show, Read, Eq)
+newtype UUID = UUID S.ByteString  deriving (Typeable, Show, Read, Eq)
 
-newtype MD5 = MD5 BS.ByteString  deriving (Typeable, Show, Read, Eq)
+newtype MD5 = MD5 S.ByteString  deriving (Typeable, Show, Read, Eq)
 
-newtype UserDefined = UserDefined BS.ByteString  deriving (Typeable, Show, Read, Eq)
+newtype UserDefined = UserDefined S.ByteString  deriving (Typeable, Show, Read, Eq)
 
 -- ** Regex
 
@@ -422,7 +430,7 @@ genObjectId = do
 	return $ Oid time (composite machineId pid inc)
  where
 	machineId :: Word24
-	machineId = unsafePerformIO (makeWord24 . BS.unpack . BS.take 3 . MD5.hash . BSC.pack <$> getHostName)
+	machineId = unsafePerformIO (makeWord24 . S.unpack . S.take 3 . MD5.hash . SC.pack <$> getHostName)
  	{-# NOINLINE machineId #-}
  	counter :: IORef Word24
  	counter = unsafePerformIO (newIORef 0)

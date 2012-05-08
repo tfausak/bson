@@ -9,21 +9,31 @@ module Data.Bson.Binary (
 ) where
 
 import Prelude hiding (length, concat)
-import Data.Bson
-import Data.Int
-import Data.Word
-import Data.Binary.Put
-import Data.Binary.Get
-import Data.Binary.IEEE754
-import Data.ByteString.Char8 (ByteString, pack, length, concat)
+import Control.Applicative ((<$>), (<*>))
+import Control.Monad (when)
+import Data.Binary.Get (Get, runGet, getWord8, getWord32be, getWord64be,
+                        getWord32le, getWord64le, getLazyByteStringNul,
+                        getLazyByteString, getByteString, isEmpty)
+import Data.Binary.Put (Put, runPut, putWord8, putWord32le, putWord64le,
+                        putWord32be, putWord64be, putLazyByteString,
+                        putByteString)
+import Data.Binary.IEEE754 (getFloat64le, putFloat64le)
+import Data.ByteString (ByteString)
+import Data.Int (Int32, Int64)
+import Data.Time.Clock (UTCTime)
+import Data.Time.Clock.POSIX (posixSecondsToUTCTime, utcTimeToPOSIXSeconds)
+import Data.Word (Word8)
+
+import qualified Data.ByteString.Char8 as SC
+import qualified Data.ByteString.Lazy.Char8 as LC
+
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
-import qualified Data.ByteString.Lazy.Char8 as L (ByteString, toChunks, length)
-import Data.Time.Clock (UTCTime)
-import Data.Time.Clock.POSIX
-import Control.Applicative ((<$>), (<*>))
-import Control.Monad (when)
+
+import Data.Bson (Document, Value(..), ObjectId(..), MongoStamp(..), Symbol(..),
+                  Javascript(..), UserDefined(..), Regex(..), MinMaxKey(..),
+                  Binary(..), UUID(..), Field(..), MD5(..), Function(..))
 
 putField :: Field -> Put
 -- ^ Write binary representation of element
@@ -115,11 +125,11 @@ putCString x = do
 	putWord8 0
 
 getCString :: Get Text
-getCString = TE.decodeUtf8 . concat . L.toChunks <$> getLazyByteStringNul
+getCString = TE.decodeUtf8 . SC.concat . LC.toChunks <$> getLazyByteStringNul
 
 putString :: Text -> Put
 putString x = let b = TE.encodeUtf8 x in do
-	putInt32 $ toEnum (length b + 1)
+	putInt32 $ toEnum (SC.length b + 1)
 	putByteString b
 	putWord8 0
 
@@ -132,7 +142,7 @@ getString = do
 
 putDocument :: Document -> Put
 putDocument es = let b = runPut (mapM_ putField es) in do
-	putInt32 $ (toEnum . fromEnum) (L.length b + 5)  -- include length and null terminator
+	putInt32 $ (toEnum . fromEnum) (LC.length b + 5)  -- include length and null terminator
 	putLazyByteString b
 	putWord8 0
 
@@ -157,7 +167,7 @@ getArray = map value <$> getDocument
 type Subtype = Word8
 
 putBinary :: Subtype -> ByteString -> Put
-putBinary t x = let len = toEnum (length x) in do
+putBinary t x = let len = toEnum (SC.length x) in do
 	putInt32 len
 	putTag t
 	putByteString x
@@ -211,7 +221,7 @@ getUTC = posixSecondsToUTCTime . (/ 1000) . fromIntegral <$> getInt64
 
 putClosure :: Text -> Document -> Put
 putClosure x y = let b = runPut (putString x >> putDocument y) in do
-	putInt32 $ (toEnum . fromEnum) (L.length b + 4)  -- including this length field
+	putInt32 $ (toEnum . fromEnum) (LC.length b + 4)  -- including this length field
 	putLazyByteString b
 
 getClosure :: Get (Text, Document)
