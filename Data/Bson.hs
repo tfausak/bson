@@ -1,12 +1,10 @@
 {- | A BSON document is a JSON-like object with a standard binary encoding defined at bsonspec.org. This implements version 1.0 of that spec.
 
-Use the GHC language extension /OverloadedStrings/ to automatically convert String literals to UString (UTF8) -}
+Use the GHC language extension /OverloadedStrings/ to automatically convert String literals to Text -}
 
 {-# LANGUAGE OverloadedStrings, TypeSynonymInstances, FlexibleInstances, DeriveDataTypeable, RankNTypes, OverlappingInstances, IncoherentInstances, ScopedTypeVariables, ForeignFunctionInterface, BangPatterns, CPP #-}
 
 module Data.Bson (
-	-- * UTF-8 String
-	module Data.UString,
 	-- * Document
 	Document, look, lookup, valueAt, at, include, exclude, merge,
 	-- * Field
@@ -30,7 +28,6 @@ import Control.Applicative ((<$>), (<*>))
 import Data.Typeable hiding (cast)
 import Data.Int
 import Data.Word
-import Data.UString (UString, u, unpack)  -- plus Show and IsString instances
 import Data.Time.Clock (UTCTime)
 import Data.Time.Clock.POSIX
 import Data.Time.Format ()  -- for Show and Read instances of UTCTime
@@ -38,6 +35,7 @@ import Data.List (find, findIndex)
 import Data.Bits (shift, (.|.))
 import qualified Data.ByteString as BS (ByteString, unpack, take)
 import qualified Data.ByteString.Char8 as BSC (pack)
+import qualified Data.Text as T
 import qualified Crypto.Hash.MD5 as MD5 (hash)
 import Numeric (readHex, showHex)
 import Network.BSD (getHostName)
@@ -48,6 +46,8 @@ import Control.Monad.Identity
 import qualified Text.ParserCombinators.ReadP as R
 import qualified Text.ParserCombinators.ReadPrec as R (lift, readS_to_Prec)
 import Text.Read (Read(..))
+
+import Data.Text (Text)
 
 getProcessID :: IO Int
 -- ^ Get the current process id.
@@ -120,9 +120,9 @@ k =: v = k := val v
 k =? ma = maybeToList (fmap (k =:) ma)
 
 instance Show Field where
-	showsPrec d (k := v) = showParen (d > 0) $ showString (' ' : unpack k) . showString ": " . showsPrec 1 v
+	showsPrec d (k := v) = showParen (d > 0) $ showString (' ' : T.unpack k) . showString ": " . showsPrec 1 v
 
-type Label = UString
+type Label = Text
 -- ^ The name of a BSON field
 
 -- * Value
@@ -130,7 +130,7 @@ type Label = UString
 -- | A BSON value is one of the following types of values
 data Value =
 	Float Double |
-	String UString |
+	String Text |
 	Doc Document |
 	Array [Value] |
 	Bin Binary |
@@ -214,16 +214,16 @@ instance Val Float where
 	cast' (Int64 x) = Just (fromIntegral x)
 	cast' _ = Nothing
 
-instance Val UString where
+instance Val Text where
 	val = String
 	cast' (String x) = Just x
 	cast' (Sym (Symbol x)) = Just x
 	cast' _ = Nothing
 
 instance Val String where
-	val = String . u
-	cast' (String x) = Just (unpack x)
-	cast' (Sym (Symbol x)) = Just (unpack x)
+	val = String . T.pack
+	cast' (String x) = Just $ T.unpack x
+	cast' (Sym (Symbol x)) = Just $ T.unpack x
 	cast' _ = Nothing
 
 instance Val Document where
@@ -375,17 +375,17 @@ newtype UserDefined = UserDefined BS.ByteString  deriving (Typeable, Show, Read,
 
 -- ** Regex
 
-data Regex = Regex UString UString  deriving (Typeable, Show, Read, Eq)
+data Regex = Regex Text Text  deriving (Typeable, Show, Read, Eq)
 -- ^ The first string is the regex pattern, the second is the regex options string. Options are identified by characters, which must be listed in alphabetical order. Valid options are *i* for case insensitive matching, *m* for multiline matching, *x* for verbose mode, *l* to make \\w, \\W, etc. locale dependent, *s* for dotall mode (\".\" matches everything), and *u* to make \\w, \\W, etc. match unicode.
 
 -- ** Javascript
 
-data Javascript = Javascript Document UString deriving (Typeable, Show, Eq)
+data Javascript = Javascript Document Text deriving (Typeable, Show, Eq)
 -- ^ Javascript code with possibly empty environment mapping variables to values that the code may reference
 
 -- ** Symbol
 
-newtype Symbol = Symbol UString  deriving (Typeable, Show, Read, Eq)
+newtype Symbol = Symbol Text  deriving (Typeable, Show, Read, Eq)
 
 -- ** MongoStamp
 
