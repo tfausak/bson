@@ -13,7 +13,7 @@ Description:   A BSON Document is an untyped (dynamically type-checked) record.
                defined at <http://bsonspec.org>. This implements version 1 of
                that spec.
 Category:      Data
-Homepage:      http://github.com/knsd/bson-haskell
+Homepage:      http://github.com/selectel/bson-haskell
 Author:        Tony Hannan
 Maintainer:    Fedor Gogolev <knsd@knsd.net>
 Copyright:     Copyright (c) 2010-2012 10gen Inc.
