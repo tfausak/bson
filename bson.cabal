@@ -37,24 +37,3 @@ Library
                     Data.Bson.Binary
 
   GHC-prof-options: -auto-all
-
-Test-suite test
-  Type:          exitcode-stdio-1.0
-  Main-is:       main.hs
-  Hs-source-dirs: test, .
-
-  Build-depends:   base < 5
-                 , time
-                 , bytestring
-                 , binary
-                 , cryptohash
-                 , data-binary-ieee754
-                 , mtl >= 2
-                 , network
-                 , text
-                 , file-location >= 0.4 && < 0.5
-                 , QuickCheck == 2.4.*
-                 , hspec >= 0.6.1
-                 , HUnit
-                 , bson
-  CPP-options:   -DTEST
