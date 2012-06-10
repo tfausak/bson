@@ -1,5 +1,5 @@
-Name:          bson-text
-Version:       0.1.7
+Name:          bson
+Version:       0.2.0
 Synopsis:      BSON documents are JSON-like objects with a standard binary
                encoding.
 Description:   A BSON Document is an untyped (dynamically type-checked) record.
