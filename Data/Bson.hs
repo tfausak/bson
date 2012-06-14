@@ -30,6 +30,7 @@ module Data.Bson (
 
 import Prelude hiding (lookup)
 import Control.Applicative ((<$>), (<*>))
+import Control.Monad (foldM)
 import Data.Bits (shift, (.|.))
 import Data.Int (Int32, Int64)
 import Data.IORef (IORef, newIORef, atomicModifyIORef)
@@ -80,10 +81,10 @@ type Document = [Field]
 -- ^ A BSON document is a list of 'Field's
 
 -- | Recursively lookup a nested field in a Document.
-(!?) :: Val a => Document -> Label -> m a
+(!?) :: Val a => Document -> Label -> Maybe a
 doc !? label = foldM (flip lookup) doc chunks >>= lookup last_
   where
-    (last_:chunks) = reverse $ T.split '.' label
+    (last_:chunks) = reverse $ T.split (== '.') label
 
 look :: (Monad m) => Label -> Document -> m Value
 -- ^ Value of field in document, or fail (Nothing) if field not found

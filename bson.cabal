@@ -31,7 +31,7 @@ Library
                     , data-binary-ieee754
                     , mtl >= 2
                     , network
-                    , text
+                    , text == 0.11.*
 
   Exposed-modules:  Data.Bson,
                     Data.Bson.Binary
