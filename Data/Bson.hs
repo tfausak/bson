@@ -79,6 +79,12 @@ showHexLen d n = showString (replicate (d - sigDigits n) '0') . showHex n  where
 type Document = [Field]
 -- ^ A BSON document is a list of 'Field's
 
+-- | Recursively lookup a nested field in a Document.
+(!?) :: Val a => Document -> Label -> m a
+doc !? label = foldM (flip lookup) doc chunks >>= lookup last_
+  where
+    (last_:chunks) = reverse $ T.split '.' label
+
 look :: (Monad m) => Label -> Document -> m Value
 -- ^ Value of field in document, or fail (Nothing) if field not found
 look k doc = maybe notFound (return . value) (find ((k ==) . label) doc) where
