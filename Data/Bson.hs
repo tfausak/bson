@@ -82,9 +82,9 @@ type Document = [Field]
 
 -- | Recursively lookup a nested field in a Document.
 (!?) :: Val a => Document -> Label -> Maybe a
-doc !? label = foldM (flip lookup) doc chunks >>= lookup last_
+doc !? label = foldM (flip lookup) doc (init chunks) >>= lookup (last chunks)
   where
-    (last_:chunks) = reverse $ T.split (== '.') label
+    chunks = T.split (== '.') label
 
 look :: (Monad m) => Label -> Document -> m Value
 -- ^ Value of field in document, or fail (Nothing) if field not found
