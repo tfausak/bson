@@ -11,7 +11,7 @@
 
 module Data.Bson (
 	-- * Document
-	Document, look, lookup, valueAt, at, include, exclude, merge,
+	Document, (!?), look, lookup, valueAt, at, include, exclude, merge,
 	-- * Field
 	Field(..), (=:), (=?),
 	Label,
