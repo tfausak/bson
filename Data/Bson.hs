@@ -292,7 +292,7 @@ instance Val Bool where
 	cast' _ = Nothing
 
 instance Val UTCTime where
-	val = UTC . posixSecondsToUTCTime . roundTo (1/1000) . utcTimeToPOSIXSeconds
+	val = UTC
 	cast' (UTC x) = Just x
 	cast' _ = Nothing
 
