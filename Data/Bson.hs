@@ -7,7 +7,7 @@
 {-# LANGUAGE OverloadedStrings, TypeSynonymInstances, FlexibleInstances #-}
 {-# LANGUAGE DeriveDataTypeable, RankNTypes, OverlappingInstances #-}
 {-# LANGUAGE IncoherentInstances, ScopedTypeVariables #-}
-{-# LANGUAGE ForeignFunctionInterface, BangPatterns, CPP #-}
+{-# LANGUAGE ForeignFunctionInterface, BangPatterns #-}
 
 module Data.Bson (
 	-- * Document
@@ -22,10 +22,6 @@ module Data.Bson (
 	Regex(..), Javascript(..), Symbol(..), MongoStamp(..), MinMaxKey(..),
 	-- ** ObjectId
 	ObjectId(..), timestamp, genObjectId
-#ifdef TEST
-    , composite
-    , roundTo
-#endif
 ) where
 
 import Prelude hiding (lookup)
