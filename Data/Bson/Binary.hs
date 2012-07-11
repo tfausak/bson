@@ -13,7 +13,7 @@ import Control.Applicative ((<$>), (<*>))
 import Control.Monad (when)
 import Data.Binary.Get (Get, runGet, getWord8, getWord32be, getWord64be,
                         getWord32le, getWord64le, getLazyByteStringNul,
-                        getLazyByteString, getByteString, isEmpty)
+                        getLazyByteString, getByteString, lookAhead)
 import Data.Binary.Put (Put, runPut, putWord8, putWord32le, putWord64le,
                         putWord32be, putWord64be, putLazyByteString,
                         putByteString)
@@ -148,12 +148,11 @@ putDocument es = let b = runPut (mapM_ putField es) in do
 
 getDocument :: Get Document
 getDocument = do
-	len <- subtract 5 <$> getInt32
+	len <- subtract 4 <$> getInt32
 	b <- getLazyByteString (fromIntegral len)
-	getWord8
 	return (runGet getFields b)
  where
-	getFields = isEmpty >>= \done -> if done
+	getFields = lookAhead getWord8 >>= \done -> if done == 0
 		then return []
 		else (:) <$> getField <*> getFields
 
