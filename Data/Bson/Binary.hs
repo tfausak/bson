@@ -44,7 +44,7 @@ putField (k := v) = case v of
 	Array x -> putTL 0x04 >> putArray x
 	Bin (Binary x) -> putTL 0x05 >> putBinary 0x00 x
 	Fun (Function x) -> putTL 0x05 >> putBinary 0x01 x
-	Uuid (UUID x) -> putTL 0x05 >> putBinary 0x03 x
+	Uuid (UUID x) -> putTL 0x05 >> putBinary 0x04 x
 	Md5 (MD5 x) -> putTL 0x05 >> putBinary 0x05 x
 	UserDef (UserDefined x) -> putTL 0x05 >> putBinary 0x80 x
 	ObjId x -> putTL 0x07 >> putObjectId x
@@ -79,6 +79,7 @@ getField = do
 			0x00 -> return $ Bin (Binary b)
 			0x01 -> return $ Fun (Function b)
 			0x03 -> return $ Uuid (UUID b)
+			0x04 -> return $ Uuid (UUID b)
 			0x05 -> return $ Md5 (MD5 b)
 			0x80 -> return $ UserDef (UserDefined b)
 			_ -> fail $ "unknown Bson binary subtype " ++ show s
