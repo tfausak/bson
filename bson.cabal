@@ -1,5 +1,5 @@
 Name:          bson
-Version:       0.2.2
+Version:       0.2.3
 Synopsis:      BSON documents are JSON-like objects with a standard binary
                encoding.
 Description:   A BSON Document is an untyped (dynamically type-checked) record.
@@ -26,7 +26,7 @@ Library
   Build-depends:      base < 5
                     , time
                     , bytestring
-                    , binary
+                    , binary == 0.7.*
                     , cryptohash
                     , data-binary-ieee754
                     , mtl >= 2
@@ -51,7 +51,7 @@ Test-suite bson-tests
                     , base < 5
                     , time
                     , bytestring
-                    , binary
+                    , binary == 0.7.*
                     , cryptohash
                     , data-binary-ieee754
                     , mtl >= 2
