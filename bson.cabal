@@ -31,7 +31,7 @@ Library
                     , data-binary-ieee754
                     , mtl >= 2
                     , network
-                    , text == 0.11.*
+                    , text >= 0.11
 
   Exposed-modules:  Data.Bson,
                     Data.Bson.Binary
@@ -56,4 +56,4 @@ Test-suite bson-tests
                     , data-binary-ieee754
                     , mtl >= 2
                     , network
-                    , text == 0.11.*
+                    , text >= 0.11
