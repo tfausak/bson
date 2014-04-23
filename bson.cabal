@@ -42,6 +42,8 @@ Test-suite bson-tests
   Type:             exitcode-stdio-1.0
   Hs-source-dirs:   tests .
   Main-is:          Tests.hs
+  Other-modules:    Data.Bson.Binary.Tests
+                    Data.Bson.Tests
   Ghc-options:      -Wall -fno-warn-orphans
 
   Build-depends:      test-framework             >= 0.4 && < 0.9
