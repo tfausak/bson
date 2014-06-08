@@ -10,7 +10,6 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE IncoherentInstances #-}
 {-# LANGUAGE OverlappingInstances #-}
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeSynonymInstances #-}
