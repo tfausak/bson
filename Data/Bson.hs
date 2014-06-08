@@ -4,10 +4,16 @@
 -- Use the GHC language extension /OverloadedStrings/ to automatically convert
 -- String literals to Text
 
-{-# LANGUAGE OverloadedStrings, TypeSynonymInstances, FlexibleInstances #-}
-{-# LANGUAGE DeriveDataTypeable, RankNTypes, OverlappingInstances #-}
-{-# LANGUAGE IncoherentInstances, ScopedTypeVariables #-}
-{-# LANGUAGE ForeignFunctionInterface, BangPatterns #-}
+{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE ForeignFunctionInterface #-}
+{-# LANGUAGE IncoherentInstances #-}
+{-# LANGUAGE OverlappingInstances #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeSynonymInstances #-}
 
 module Data.Bson (
 	-- * Document
