@@ -269,10 +269,13 @@ instance Val Char where
 	cast'List (Sym (Symbol x)) = Just $ T.unpack x
 	cast'List _ = Nothing
 
-instance Val Document where
-	val = Doc
-	cast' (Doc x) = Just x
+instance Val Field where
+	val x = valList [x]
+	valList = Doc
 	cast' _ = Nothing
+	cast'List v = case v of
+		Doc x -> Just x
+		_ -> Nothing
 
 instance Val [Value] where
 	val = Array
