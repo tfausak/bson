@@ -257,11 +257,17 @@ instance Val Text where
 	cast' (Sym (Symbol x)) = Just x
 	cast' _ = Nothing
 
-instance Val String where
-	val = String . T.pack
-	cast' (String x) = Just $ T.unpack x
-	cast' (Sym (Symbol x)) = Just $ T.unpack x
-	cast' _ = Nothing
+instance Val Char where
+	val x = valList [x]
+	valList = String . T.pack
+	cast' v = cast'List v >>= safeHead
+		where
+			safeHead list = case list of
+				x : _ -> Just x
+				_ -> Nothing
+	cast'List (String x) = Just $ T.unpack x
+	cast'List (Sym (Symbol x)) = Just $ T.unpack x
+	cast'List _ = Nothing
 
 instance Val Document where
 	val = Doc
