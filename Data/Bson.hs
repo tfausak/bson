@@ -218,8 +218,24 @@ typeOfVal = fval typeOf
 
 -- | Haskell types of this class correspond to BSON value types
 class (Typeable a, Show a, Eq a) => Val a where
+
 	val :: a -> Value
+
+	valList :: [a] -> Value
+	valList = Array . map val
+
+	valMaybe :: Maybe a -> Value
+	valMaybe = maybe Null val
+
 	cast' :: Value -> Maybe a
+
+	cast'List :: Value -> Maybe [a]
+	cast'List (Array x) = mapM cast x
+	cast'List _ = Nothing
+
+	cast'Maybe :: Value -> Maybe (Maybe a)
+	cast'Maybe Null = Just Nothing
+	cast'Maybe v = fmap Just (cast' v)
 
 instance Val Double where
 	val = Float
@@ -258,9 +274,8 @@ instance Val [Value] where
 	cast' _ = Nothing
 
 instance (Val a) => Val [a] where
-	val = Array . map val
-	cast' (Array x) = mapM cast x
-	cast' _ = Nothing
+	val = valList
+	cast' = cast'List
 
 instance Val Binary where
 	val = Bin
@@ -314,10 +329,8 @@ instance Val (Maybe Value) where
 	cast' v = Just (Just v)
 
 instance (Val a) => Val (Maybe a) where
-	val Nothing = Null
-	val (Just a) = val a
-	cast' Null = Just Nothing
-	cast' v = fmap Just (cast' v)
+	val = valMaybe
+	cast' = cast'Maybe
 
 instance Val Regex where
 	val = RegEx
