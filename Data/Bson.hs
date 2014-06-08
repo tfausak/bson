@@ -277,10 +277,9 @@ instance Val Field where
 		Doc x -> Just x
 		_ -> Nothing
 
-instance Val [Value] where
-	val = Array
-	cast' (Array x) = Just x
-	cast' _ = Nothing
+instance Val Value where
+	val = id
+	cast' = Just
 
 instance (Val a) => Val [a] where
 	val = valList
@@ -330,12 +329,6 @@ instance Val POSIXTime where
 	val = UTC . posixSecondsToUTCTime . roundTo (1/1000)
 	cast' (UTC x) = Just (utcTimeToPOSIXSeconds x)
 	cast' _ = Nothing
-
-instance Val (Maybe Value) where
-	val Nothing = Null
-	val (Just v) = v
-	cast' Null = Just Nothing
-	cast' v = Just (Just v)
 
 instance (Val a) => Val (Maybe a) where
 	val = valMaybe
