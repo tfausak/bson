@@ -11,7 +11,6 @@
 {-# LANGUAGE IncoherentInstances #-}
 {-# LANGUAGE OverlappingInstances #-}
 {-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 
 module Data.Bson (
@@ -100,10 +99,12 @@ valueAt :: Label -> Document -> Value
 -- ^ Value of field in document. Error if missing.
 valueAt k = runIdentity . look k
 
-at :: forall v. (Val v) => Label -> Document -> v
+at :: (Val v) => Label -> Document -> v
 -- ^ Typed value of field in document. Error if missing or wrong type.
-at k doc = maybe err id (lookup k doc)  where
-	err = error $ "expected (" ++ show k ++ " :: " ++ show (typeOf (undefined :: v)) ++ ") in " ++ show doc
+at k doc = result
+	where
+		result = maybe err id (lookup k doc)
+		err = error $ "expected (" ++ show k ++ " :: " ++ show (typeOf result) ++ ") in " ++ show doc
 
 include :: [Label] -> Document -> Document
 -- ^ Only include fields of document in label list
@@ -196,10 +197,14 @@ fval f v = case v of
 
 -- * Value conversion
 
-cast :: forall m a. (Val a, Monad m) => Value -> m a
+cast :: (Val a, Monad m) => Value -> m a
 -- ^ Convert Value to expected type, or fail (Nothing) if not of that type
-cast v = maybe notType return (cast' v) where
-	notType = fail $ "expected " ++ show (typeOf (undefined :: a)) ++ ": " ++ show v
+cast v = maybe notType return castingResult
+	where
+		castingResult = cast' v
+		unMaybe :: Maybe a -> a
+		unMaybe = undefined
+		notType = fail $ "expected " ++ show (typeOf $ unMaybe castingResult) ++ ": " ++ show v
 
 typed :: (Val a) => Value -> a
 -- ^ Convert Value to expected type. Error if not that type.
@@ -369,11 +374,14 @@ instance Val MinMaxKey where
 	cast' (MinMax x) = Just x
 	cast' _ = Nothing
 
-fitInt :: forall n m. (Integral n, Integral m, Bounded m) => n -> Maybe m
+fitInt :: (Integral n, Integral m, Bounded m) => n -> Maybe m
 -- ^ If number fits in type m then cast to m, otherwise Nothing
-fitInt n = if fromIntegral (minBound :: m) <= n && n <= fromIntegral (maxBound :: m)
-	then Just (fromIntegral n)
-	else Nothing
+fitInt n =
+	if fromIntegral (minBound `asTypeOf` result) <= n && n <= fromIntegral (maxBound `asTypeOf` result)
+		then Just result
+		else Nothing
+	where
+		result = fromIntegral n
 
 -- * Haskell types corresponding to special Bson value types
 
