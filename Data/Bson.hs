@@ -4,7 +4,6 @@
 -- Use the GHC language extension /OverloadedStrings/ to automatically convert
 -- String literals to Text
 
-{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE RankNTypes #-}
@@ -32,7 +31,7 @@ import Data.Bits (shift, (.|.))
 import Data.Int (Int32, Int64)
 import Data.IORef (IORef, newIORef, atomicModifyIORef)
 import Data.List (find, findIndex)
-import Data.Maybe (maybeToList, mapMaybe)
+import Data.Maybe (maybeToList, mapMaybe, fromMaybe)
 import Data.Time.Clock (UTCTime)
 import Data.Time.Clock.POSIX (POSIXTime, posixSecondsToUTCTime,
                               utcTimeToPOSIXSeconds, getPOSIXTime)
@@ -64,13 +63,13 @@ foreign import ccall unsafe "getpid"
 
 roundTo :: (RealFrac a) => a -> a -> a
 -- ^ Round second number to nearest multiple of first number. Eg: roundTo (1/1000) 0.12345 = 0.123
-roundTo mult n = fromIntegral (round (n / mult)) * mult
+roundTo mult n = fromIntegral (round (n / mult) :: Integer) * mult
 
 showHexLen :: (Show n, Integral n) => Int -> n -> ShowS
 -- ^ showHex of n padded with leading zeros if necessary to fill d digits
 showHexLen d n = showString (replicate (d - sigDigits n) '0') . showHex n  where
 	sigDigits 0 = 1
-	sigDigits n' = truncate (logBase 16 $ fromIntegral n') + 1
+	sigDigits n' = truncate (logBase 16 $ fromIntegral n' :: Double) + 1
 
 -- * Document
 
@@ -79,9 +78,9 @@ type Document = [Field]
 
 -- | Recursively lookup a nested field in a Document.
 (!?) :: Val a => Document -> Label -> Maybe a
-doc !? label = foldM (flip lookup) doc (init chunks) >>= lookup (last chunks)
+doc !? l = foldM (flip lookup) doc (init chunks) >>= lookup (last chunks)
   where
-    chunks = T.split (== '.') label
+    chunks = T.split (== '.') l
 
 look :: (Monad m) => Label -> Document -> m Value
 -- ^ Value of field in document, or fail (Nothing) if field not found
@@ -100,7 +99,7 @@ at :: (Val v) => Label -> Document -> v
 -- ^ Typed value of field in document. Error if missing or wrong type.
 at k doc = result
 	where
-		result = maybe err id (lookup k doc)
+		result = fromMaybe err (lookup k doc)
 		err = error $ "expected (" ++ show k ++ " :: " ++ show (typeOf result) ++ ") in " ++ show doc
 
 include :: [Label] -> Document -> Document
@@ -109,11 +108,11 @@ include keys doc = mapMaybe (\k -> find ((k ==) . label) doc) keys
 
 exclude :: [Label] -> Document -> Document
 -- ^ Exclude fields from document in label list
-exclude keys doc = filter (\(k := _) -> notElem k keys) doc
+exclude keys = filter (\(k := _) -> notElem k keys)
 
 merge :: Document -> Document -> Document
 -- ^ Merge documents with preference given to first one when both have the same label. I.e. for every (k := v) in first argument, if k exists in second argument then replace its value with v, otherwise add (k := v) to second argument.
-merge es doc = foldl f doc es where
+merge es docInitial = foldl f docInitial es where
 	f doc (k := v) = case findIndex ((k ==) . label) doc of
 		Nothing -> doc ++ [k := v]
 		Just i -> let (x, _ : y) = splitAt i doc in x ++ [k := v] ++ y
@@ -166,7 +165,7 @@ data Value =
 	deriving (Typeable, Eq, Ord)
 
 instance Show Value where
-	showsPrec d v = fval (showsPrec d) v
+	showsPrec d = fval (showsPrec d)
 
 fval :: (forall a . (Val a) => a -> b) -> Value -> b
 -- ^ Apply generic function to typed value

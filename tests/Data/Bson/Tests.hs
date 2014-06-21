@@ -20,7 +20,8 @@ import qualified Data.Text as T
 import Data.Bson (Val(cast', val), ObjectId(..), MinMaxKey(..), MongoStamp(..),
                   Symbol(..), Javascript(..), Regex(..), UserDefined(..),
                   MD5(..), UUID(..), Function(..), Binary(..), Field((:=)),
-                  Document, Value(..))
+                  -- Document,
+                  Value(..))
 import qualified Data.Bson as Bson
 
 instance Arbitrary S.ByteString where

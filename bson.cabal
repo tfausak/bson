@@ -19,7 +19,7 @@ Maintainer:    Fedor Gogolev <knsd@knsd.net>
 Copyright:     Copyright (c) 2010-2012 10gen Inc.
 License:       OtherLicense
 License-file:  LICENSE
-Cabal-version: >= 1.8
+Cabal-version: >= 1.10
 Build-type:    Simple
 
 Library
@@ -32,6 +32,9 @@ Library
                     , mtl >= 2
                     , network
                     , text >= 0.11
+
+  Default-Language: Haskell2010
+  Default-Extensions: BangPatterns
 
   Exposed-modules:  Data.Bson,
                     Data.Bson.Binary
