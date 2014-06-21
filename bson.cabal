@@ -1,5 +1,5 @@
 Name:          bson
-Version:       0.2.4
+Version:       0.3
 Synopsis:      BSON documents are JSON-like objects with a standard binary
                encoding.
 Description:   A BSON Document is an untyped (dynamically type-checked) record.
@@ -15,7 +15,7 @@ Description:   A BSON Document is an untyped (dynamically type-checked) record.
 Category:      Data
 Homepage:      http://github.com/selectel/bson-haskell
 Author:        Tony Hannan
-Maintainer:    Fedor Gogolev <knsd@knsd.net>
+Maintainer:    Fedor Gogolev <knsd@knsd.net>, Greg Weber <greg@gregweber.info>
 Copyright:     Copyright (c) 2010-2012 10gen Inc.
 License:       OtherLicense
 License-file:  LICENSE
