@@ -25,7 +25,7 @@ module Data.Bson (
 ) where
 
 import Prelude hiding (lookup)
-import Control.Applicative ((<$>), (<*>))
+import Control.Applicative ((<$>))
 import Control.Monad (foldM)
 import Data.Bits (shift, (.|.))
 import Data.Int (Int32, Int64)
