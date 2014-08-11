@@ -21,7 +21,7 @@ module Data.Bson (
 	Binary(..), Function(..), UUID(..), MD5(..), UserDefined(..),
 	Regex(..), Javascript(..), Symbol(..), MongoStamp(..), MinMaxKey(..),
 	-- ** ObjectId
-	ObjectId(..), timestamp, genObjectId
+	ObjectId(..), timestamp, genObjectId, showHexLen
 ) where
 
 import Prelude hiding (lookup)
