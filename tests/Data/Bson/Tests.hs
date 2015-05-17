@@ -4,7 +4,9 @@ module Data.Bson.Tests
     ( tests
     ) where
 
+#if !MIN_VERSION_base(4,8,0)
 import Control.Applicative ((<$>), (<*>))
+#endif
 import Data.Int (Int32, Int64)
 import Data.Time.Calendar (Day(ModifiedJulianDay))
 import Data.Time.Clock.POSIX (POSIXTime)
