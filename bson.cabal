@@ -34,7 +34,7 @@ Library
                     , text >= 0.11
 
   Default-Language: Haskell2010
-  Default-Extensions: BangPatterns
+  Default-Extensions: BangPatterns, CPP
 
   Exposed-modules:  Data.Bson,
                     Data.Bson.Binary
@@ -62,3 +62,5 @@ Test-suite bson-tests
                     , mtl >= 2
                     , network
                     , text >= 0.11
+  Default-Language: Haskell2010
+  Default-Extensions: CPP
