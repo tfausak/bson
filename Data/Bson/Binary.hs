@@ -88,6 +88,7 @@ getField = do
           case s of
            0x00 -> return $ Bin (Binary b)
            0x01 -> return $ Fun (Function b)
+           0x02 -> return $ Bin (Binary b)
            0x03 -> return $ Uuid (UUID b)
            0x04 -> return $ Uuid (UUID b)
            0x05 -> return $ Md5 (MD5 b)
