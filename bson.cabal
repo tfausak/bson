@@ -1,5 +1,5 @@
 Name:          bson
-Version:       0.3.1
+Version:       0.3.2
 Synopsis:      BSON documents are JSON-like objects with a standard binary
                encoding.
 Description:   A BSON Document is an untyped (dynamically type-checked) record.
@@ -21,6 +21,7 @@ License:       OtherLicense
 License-file:  LICENSE
 Cabal-version: >= 1.10
 Build-type:    Simple
+Extra-Source-Files: CHANGELOG.md
 
 Library
   Build-depends:      base < 5
