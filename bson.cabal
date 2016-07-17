@@ -1,5 +1,5 @@
 Name:          bson
-Version:       0.3.2.2
+Version:       0.3.2.3
 Synopsis:      BSON documents are JSON-like objects with a standard binary
                encoding.
 Description:   A BSON Document is an untyped (dynamically type-checked) record.
@@ -50,9 +50,9 @@ Test-suite bson-tests
                     Data.Bson.Tests
   Ghc-options:      -Wall -fno-warn-orphans
 
-  Build-depends:      test-framework             >= 0.4 && < 0.9
-                    , test-framework-quickcheck2 >= 0.2 && < 0.4
-                    , QuickCheck                 >= 2.4 && < 2.9
+  Build-depends:      test-framework             >= 0.4
+                    , test-framework-quickcheck2 >= 0.2
+                    , QuickCheck                 >= 2.4
                     -- Copied from regular dependencies...
                     , base < 5
                     , time
