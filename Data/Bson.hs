@@ -424,7 +424,7 @@ data MinMaxKey = MinKey | MaxKey  deriving (Typeable, Show, Read, Eq, Ord)
 
 -- ** ObjectId
 
-data ObjectId = Oid Word32 Word64  deriving (Typeable, Eq, Ord)
+data ObjectId = Oid {-# UNPACK #-} !Word32 {-# UNPACK #-} !Word64  deriving (Typeable, Eq, Ord)
 -- ^ A BSON ObjectID is a 12-byte value consisting of a 4-byte timestamp (seconds since epoch), a 3-byte machine id, a 2-byte process id, and a 3-byte counter. Note that the timestamp and counter fields must be stored big endian unlike the rest of BSON. This is because they are compared byte-by-byte and we want to ensure a mostly increasing order.
 
 instance Show ObjectId where
