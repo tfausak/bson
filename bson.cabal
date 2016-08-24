@@ -17,7 +17,7 @@ Homepage:      http://github.com/mongodb-haskell/bson
 Author:        Tony Hannan
 Maintainer:    Fedor Gogolev <knsd@knsd.net>, Greg Weber <greg@gregweber.info>
 Copyright:     Copyright (c) 2010-2012 10gen Inc.
-License:       OtherLicense
+License:       Apache-2.0
 License-file:  LICENSE
 Cabal-version: >= 1.10
 Build-type:    Simple
