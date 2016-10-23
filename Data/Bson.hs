@@ -4,6 +4,7 @@
 -- Use the GHC language extension /OverloadedStrings/ to automatically convert
 -- String literals to Text
 
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE RankNTypes #-}
@@ -60,8 +61,13 @@ getProcessID :: IO Int
 -- ^ Get the current process id.
 getProcessID = c_getpid
 
+#if defined(mingw32_HOST_OS) || defined(__MINGW32__)
+foreign import ccall unsafe "_getpid"
+   c_getpid :: IO Int
+#else
 foreign import ccall unsafe "getpid"
    c_getpid :: IO Int
+#endif
 
 roundTo :: (RealFrac a) => a -> a -> a
 -- ^ Round second number to nearest multiple of first number. Eg: roundTo (1/1000) 0.12345 = 0.123
