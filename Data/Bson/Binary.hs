@@ -94,17 +94,19 @@ getField = do
            0x05 -> return $ Md5 (MD5 b)
            0x80 -> return $ UserDef (UserDefined b)
            _ -> fail $ "unknown Bson binary subtype " ++ show s
+        0x06 -> return Null
         0x07 -> ObjId <$> getObjectId
         0x08 -> Bool <$> getBool
         0x09 -> UTC <$> getUTC
         0x0A -> return Null
         0x0B -> RegEx <$> getRegex
+        0x0C -> ObjId <$> getObjectId <* getString
         0x0D -> JavaScr . Javascript [] <$> getString
-        0x0F -> JavaScr . uncurry (flip Javascript) <$> getClosure
         0x0E -> Sym <$> getSymbol
+        0x0F -> JavaScr . uncurry (flip Javascript) <$> getClosure
         0x10 -> Int32 <$> getInt32
-        0x12 -> Int64 <$> getInt64
         0x11 -> Stamp <$> getMongoStamp
+        0x12 -> Int64 <$> getInt64
         0xFF -> return (MinMax MinKey)
         0x7F -> return (MinMax MaxKey)
         _ -> fail $ "unknown Bson value type " ++ show t
