@@ -40,7 +40,9 @@ Library
   Exposed-modules:  Data.Bson,
                     Data.Bson.Binary
 
-  GHC-prof-options: -auto-all
+Source-repository head
+    Type:     git
+    Location: https://github.com/mongodb-haskell/bson
 
 Test-suite bson-tests
   Type:             exitcode-stdio-1.0
