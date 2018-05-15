@@ -1,4 +1,22 @@
 language: haskell
-install:
-  - cabal update
-  - cabal install --enable-tests --verbose=2
+
+jobs:
+  include:
+    - stage: test
+      install:
+        - cabal update
+        - cabal install --enable-tests --verbose=2
+
+    - stage: deploy
+      before_install:
+        - cabal --version
+      install: skip
+      script: skip
+      deploy:
+        provider: hackage
+        username: VictorDenisov
+        password:
+          secure: DPYlqRN09gFp06paLj9bRBzpxTkqkZzfsTrU3j0WiqRzqUMeWEeiZNAkIE/maC9xrEuuYBTk0KlSdz+esF4kjfyRQFTxb9CvXrZ474qHozVLC01vh/av5bGZBDQOwgzJrJNVpfl+g+EADOicz9/nhPXiAd7nCQIv/2s/xM1Yj1U=
+        on:
+          repo: mongodb-haskell/bson
+          tags: true
