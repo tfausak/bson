@@ -16,7 +16,7 @@ jobs:
         provider: hackage
         username: VictorDenisov
         password:
-          secure: DPYlqRN09gFp06paLj9bRBzpxTkqkZzfsTrU3j0WiqRzqUMeWEeiZNAkIE/maC9xrEuuYBTk0KlSdz+esF4kjfyRQFTxb9CvXrZ474qHozVLC01vh/av5bGZBDQOwgzJrJNVpfl+g+EADOicz9/nhPXiAd7nCQIv/2s/xM1Yj1U=
+          secure: iM14fPVAVWRS1UZ3gxW2RXup4E1OIppTpCOgIdhWghhhHIKEMNaB8mnFT0+KHYp3iKjW0PUXu9xaEEzPJRsWjrcBYtG7Xim2kIrQzve6pDKQ3FBXYbknvxYqmzW43cO5bkDhlaaHP/8nswURjobw9a786loxelpQahtdeT1x2yc=
         on:
           repo: mongodb-haskell/bson
           tags: true
