@@ -15,7 +15,7 @@ module Data.Bson.Binary
 
 import Prelude hiding (length, concat)
 #if !MIN_VERSION_base(4,8,0)
-import Control.Applicative ((<$>), (<*>))
+import Control.Applicative ((<$>), (<*>), (<*))
 #endif
 import Control.Monad (when)
 import Data.Binary.Get (Get, runGet, getWord8, getWord32be, getWord64be,
