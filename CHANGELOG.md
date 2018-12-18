@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 This project adheres to [Package Versioning Policy](https://wiki.haskell.org/Package_versioning_policy).
+## [0.3.2.7] - 2018-12-17
+
+### Fixed
+- Fix compilation on GHC < 7.10
+
 ## [0.3.2.6] - 2018-05-14
 
 ### Added
