@@ -36,6 +36,7 @@ Library
                     , data-binary-ieee754
                     , mtl >= 2
                     , text >= 0.11
+		    , fail
 
   if flag(_old-network)
      -- "Network.BSD" is only available in network < 2.9

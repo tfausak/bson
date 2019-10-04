@@ -30,11 +30,12 @@ import Prelude hiding (lookup)
 import Control.Applicative ((<$>))
 #endif
 import Control.Monad (foldM)
+import Control.Monad.Fail (MonadFail, fail)
 import Data.Bits (shift, (.|.))
 import Data.Int (Int32, Int64)
 import Data.IORef (IORef, newIORef, atomicModifyIORef)
 import Data.List (find, findIndex)
-import Data.Maybe (maybeToList, mapMaybe, fromMaybe)
+import Data.Maybe (maybeToList, mapMaybe, fromMaybe, fromJust)
 import Data.Time.Clock (UTCTime)
 import Data.Time.Clock.POSIX (POSIXTime, posixSecondsToUTCTime,
                               utcTimeToPOSIXSeconds, getPOSIXTime)
@@ -89,18 +90,18 @@ type Document = [Field]
 doc !? l = foldM (flip lookup) doc (init chunks) >>= lookup (last chunks)
   where chunks = T.split (== '.') l
 
-look :: (Monad m) => Label -> Document -> m Value
+look :: (MonadFail m) => Label -> Document -> m Value
 -- ^ Value of field in document, or fail (Nothing) if field not found
 look k doc = maybe notFound (return . value) (find ((k ==) . label) doc)
   where notFound = fail $ "expected " ++ show k ++ " in " ++ show doc
 
-lookup :: (Val v, Monad m) => Label -> Document -> m v
+lookup :: (Val v, MonadFail m) => Label -> Document -> m v
 -- ^ Lookup value of field in document and cast to expected type. Fail (Nothing) if field not found or value not of expected type.
 lookup k doc = cast =<< look k doc
 
 valueAt :: Label -> Document -> Value
 -- ^ Value of field in document. Error if missing.
-valueAt k = runIdentity . look k
+valueAt k = fromJust . look k
 
 at :: (Val v) => Label -> Document -> v
 -- ^ Typed value of field in document. Error if missing or wrong type.
@@ -199,7 +200,7 @@ fval f v = case v of
 
 -- * Value conversion
 
-cast :: (Val a, Monad m) => Value -> m a
+cast :: (Val a, MonadFail m) => Value -> m a
 -- ^ Convert Value to expected type, or fail (Nothing) if not of that type
 cast v = maybe notType return castingResult
   where
@@ -210,7 +211,7 @@ cast v = maybe notType return castingResult
 
 typed :: (Val a) => Value -> a
 -- ^ Convert Value to expected type. Error if not that type.
-typed = runIdentity . cast
+typed = fromJust . cast
 
 typeOfVal :: Value -> TypeRep
 -- ^ Type of typed value
