@@ -30,6 +30,7 @@ import Prelude hiding (lookup)
 import Control.Applicative ((<$>))
 #endif
 import Control.Monad (foldM)
+import Control.Monad.Fail (MonadFail)
 import Data.Bits (shift, (.|.))
 import Data.Int (Int32, Int64)
 import Data.IORef (IORef, newIORef, atomicModifyIORef)
